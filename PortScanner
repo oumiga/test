@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+import socket,time,threading
+from threading import activeCount
+lock = threading.Lock()
+threads=[]
+port = [21,22,23,25,53,69,80,81,82,83,84,85,86,87,88,89,110,135,139,143,443,445,465,993,995,1080,1158,1433,1521,1863,2100,3128,3306,3389,7001,8080,8081,8082,8083,8084,8085,8086,8087,8088,8888,9080,9090]
+def portScanner(host,port):
+    try:
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect((host,port))
+        print('port %d open' % port)
+        s.close()
+        return
+    except:
+        pass
+
+def main(host):
+    p = 0
+    while p < 65535 :
+        if activeCount()<=800:
+            t = threading.Thread(target=portScanner,args=(host,p))
+            t.start()
+            p = p+1
+    while True:
+        if activeCount() == 2:
+            break
+        break
+
+if __name__ == '__main__':
+    host = input ("需要扫描的主机:")
+    choice = input ("1.常用端口扫描\n2.全端口扫描\n")
+    if choice == '1':
+        print ("常用端口扫描开始\n扫描主机为%s\n"%host)
+        for p in port:
+            portScanner(host,p)
+    elif choice == '2':
+        print ("目标主机%s:全端口扫描开始"%host)
+        main(host)
+    else:
+        print ("选择错误，请重新选择")
+    finish = input ("扫描完成")
